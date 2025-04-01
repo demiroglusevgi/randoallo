@@ -67,7 +67,7 @@
 </head>
 <body>
     <h1>Random Allocation Game</h1>
-    <p>You have two boxes in front of you: one belongs to UConn Storrs Campus and one belongs to a random person from UConn Stamford Campus. You roll a die 20 times and each die roll will tell you how to assign one 50 cent coin; each time you roll the die, you will put 50 cents in one of the two cups in front of you. After you finish today’s activities, we will deliver this cup of money to a person randomly selected from Storrs and one randomly selected person from Stamford. You will not be informed about who will receive the money and the persons who receive the money will not know about you.</p>
+    <p>You have $10 to allocate between two groups. Click "Roll the Die" to determine which group receives the money. After each game, earnings for each box will be displayed before starting the next game.</p>
     
     <div class="dice" id="dice">50¢</div>
     
@@ -76,9 +76,11 @@
     <div class="allocation-container">
         <div id="Storrs" class="allocation-box">
             <div class="box-title">UConn Storrs Campus</div>
+            <p id="storrs-earnings">$0.00</p>
         </div>
         <div id="Stamford" class="allocation-box">
             <div class="box-title">UConn Stamford Campus</div>
+            <p id="stamford-earnings">$0.00</p>
         </div>
     </div>
     
@@ -86,22 +88,29 @@
     <p id="money-left">Money Left: $10.00</p>
     
     <script>
-        let score = 0;
-        let trialsLeft = 20;
+        let games = 4;
+        let currentGame = 1;
         let moneyLeft = 10.00;
+        let trialsLeft = 20;
+        let storrsTotal = 0.00;
+        let stamfordTotal = 0.00;
         let dieRolled = false;
 
         function rollDie() {
-            return Math.random() < 0.5 ? 'pink' : 'green';
+            return Math.random() < 0.5 ? 'Storrs' : 'Stamford';
         }
 
         function updateGame() {
             if (!dieRolled) return;
             const dieResult = rollDie();
-            document.getElementById('dice').style.backgroundColor = dieResult;
-            document.getElementById('dice').style.color = "black";
             document.getElementById('dice').innerHTML = "50¢";
             document.getElementById('roll-die').disabled = true;
+
+            if (dieResult === 'Storrs') {
+                storrsTotal += 0.50;
+            } else {
+                stamfordTotal += 0.50;
+            }
         }
 
         document.getElementById('roll-die').addEventListener('click', function() {
@@ -111,31 +120,20 @@
             }
         });
 
-        function resetDie() {
-            document.getElementById('dice').style.backgroundColor = "transparent";
-            document.getElementById('dice').innerHTML = "50¢";
-            document.getElementById('roll-die').disabled = false;
-            dieRolled = false;
-        }
-
         function allocateMoney() {
             if (!dieRolled) return;
-            score++;
             trialsLeft--;
             moneyLeft -= 0.50;
             document.getElementById('money-left').innerHTML = `Money Left: $${moneyLeft.toFixed(2)}`;
+            document.getElementById('storrs-earnings').innerHTML = `$${storrsTotal.toFixed(2)}`;
+            document.getElementById('stamford-earnings').innerHTML = `$${stamfordTotal.toFixed(2)}`;
             
-            if (trialsLeft <= 0) {
-                document.getElementById('final-score').innerHTML = `Game Over! Final Score: ${score}`;
-                document.getElementById('final-score').style.display = "block";
-                document.getElementById('roll-die').disabled = true;
+            if (moneyLeft <= 0) {
+                document.body.innerHTML = '<h1>Game Over!</h1><p>Storrs: $' + storrsTotal.toFixed(2) + ', Stamford: $' + stamfordTotal.toFixed(2) + '</p><button class="button" onclick="startNextGame()">Next Game</button>';
             } else {
                 resetDie();
             }
         }
 
-        document.getElementById('Storrs').addEventListener('click', allocateMoney);
-        document.getElementById('Stamford').addEventListener('click', allocateMoney);
-    </script>
-</body>
-</html>
+        function resetDie() {
+            document.getElem
