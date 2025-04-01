@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Allocation Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 32px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 20px;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        .dice {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 40px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid black;
+            text-align: center;
+            background-color: transparent;
+            color: black;
+        }
+        .result {
+            font-size: 24px;
+            margin-top: 30px;
+            display: none;
+        }
+        .allocation-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .allocation-box {
+            width: 200px;
+            height: 80px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            border: 2px solid black;
+            border-radius: 10px;
+            background-color: transparent;
+        }
+        .box-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Random Allocation Game</h1>
+    <p>You have two boxes in front of you: one belongs to UConn Storrs Campus and one belongs to a random person from UConn Stamford Campus. You roll a die 20 times and each die roll will tell you how to assign one 50 cent coin; each time you roll the die, you will put 50 cents in one of the two cups in front of you. After you finish today’s activities, we will deliver this cup of money to a person randomly selected from Storrs and one randomly selected person from Stamford. You will not be informed about who will receive the money and the persons who receive the money will not know about you.</p>
+    
+    <div class="dice" id="dice">50¢</div>
+    
+    <button class="button" id="roll-die">Roll the Die</button>
+    
+    <div class="allocation-container">
+        <div id="Storrs" class="allocation-box">
+            <div class="box-title">UConn Storrs Campus</div>
+        </div>
+        <div id="Stamford" class="allocation-box">
+            <div class="box-title">UConn Stamford Campus</div>
+        </div>
+    </div>
+    
+    <div class="result" id="final-score"></div>
+    <p id="money-left">Money Left: $10.00</p>
+    
+    <script>
+        let score = 0;
+        let trialsLeft = 20;
+        let moneyLeft = 10.00;
+        let dieRolled = false;
+
+        function rollDie() {
+            return Math.random() < 0.5 ? 'pink' : 'green';
+        }
+
+        function updateGame() {
+            if (!dieRolled) return;
+            const dieResult = rollDie();
+            document.getElementById('dice').style.backgroundColor = dieResult;
+            document.getElementById('dice').style.color = "black";
+            document.getElementById('dice').innerHTML = "50¢";
+            document.getElementById('roll-die').disabled = true;
+        }
+
+        document.getElementById('roll-die').addEventListener('click', function() {
+            if (trialsLeft > 0 && !dieRolled) {
+                dieRolled = true;
+                updateGame();
+            }
+        });
+
+        function resetDie() {
+            document.getElementById('dice').style.backgroundColor = "transparent";
+            document.getElementById('dice').innerHTML = "50¢";
+            document.getElementById('roll-die').disabled = false;
+            dieRolled = false;
+        }
+
+        function allocateMoney() {
+            if (!dieRolled) return;
+            score++;
+            trialsLeft--;
+            moneyLeft -= 0.50;
+            document.getElementById('money-left').innerHTML = `Money Left: $${moneyLeft.toFixed(2)}`;
+            
+            if (trialsLeft <= 0) {
+                document.getElementById('final-score').innerHTML = `Game Over! Final Score: ${score}`;
+                document.getElementById('final-score').style.display = "block";
+                document.getElementById('roll-die').disabled = true;
+            } else {
+                resetDie();
+            }
+        }
+
+        document.getElementById('Storrs').addEventListener('click', allocateMoney);
+        document.getElementById('Stamford').addEventListener('click', allocateMoney);
+    </script>
+</body>
+</html>
