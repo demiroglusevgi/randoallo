@@ -67,20 +67,20 @@
 </head>
 <body>
     <h1>Random Allocation Game</h1>
-    <p>You have $10 to allocate between two groups. Click "Roll the Die" to determine which group receives the money. After each game, earnings for each box will be displayed before starting the next game.</p>
+    <p id="game-instructions"></p>
     
     <div class="dice" id="dice">50¢</div>
     
     <button class="button" id="roll-die">Roll the Die</button>
     
     <div class="allocation-container">
-        <div id="Storrs" class="allocation-box">
-            <div class="box-title">UConn Storrs Campus</div>
-            <p id="storrs-earnings">$0.00</p>
+        <div id="box1" class="allocation-box">
+            <div class="box-title" id="box1-title"></div>
+            <p id="box1-earnings">$0.00</p>
         </div>
-        <div id="Stamford" class="allocation-box">
-            <div class="box-title">UConn Stamford Campus</div>
-            <p id="stamford-earnings">$0.00</p>
+        <div id="box2" class="allocation-box">
+            <div class="box-title" id="box2-title"></div>
+            <p id="box2-earnings">$0.00</p>
         </div>
     </div>
     
@@ -91,13 +91,24 @@
         let games = 4;
         let currentGame = 1;
         let moneyLeft = 10.00;
-        let trialsLeft = 20;
-        let storrsTotal = 0.00;
-        let stamfordTotal = 0.00;
+        let box1Total = 0.00;
+        let box2Total = 0.00;
         let dieRolled = false;
+        const gameSettings = [
+            { title: "UConn Storrs Campus vs. UConn Stamford Campus", box1: "UConn Storrs Campus", box2: "UConn Stamford Campus" },
+            { title: "Self vs. UConn Stamford Campus", box1: "Self", box2: "UConn Stamford Campus" },
+            { title: "UConn Stamford Campus vs. Syracuse New York Campus", box1: "UConn Stamford Campus", box2: "Syracuse New York Campus" },
+            { title: "Self vs. Syracuse New York Campus", box1: "Self", box2: "Syracuse New York Campus" }
+        ];
+
+        function setGameScreen() {
+            document.getElementById("game-instructions").innerHTML = `You have $10 to allocate between two groups: ${gameSettings[currentGame - 1].box1} and ${gameSettings[currentGame - 1].box2}. Click \"Roll the Die\" to determine which group receives the money.`;
+            document.getElementById("box1-title").innerText = gameSettings[currentGame - 1].box1;
+            document.getElementById("box2-title").innerText = gameSettings[currentGame - 1].box2;
+        }
 
         function rollDie() {
-            return Math.random() < 0.5 ? 'Storrs' : 'Stamford';
+            return Math.random() < 0.5 ? 'box1' : 'box2';
         }
 
         function updateGame() {
@@ -106,15 +117,15 @@
             document.getElementById('dice').innerHTML = "50¢";
             document.getElementById('roll-die').disabled = true;
 
-            if (dieResult === 'Storrs') {
-                storrsTotal += 0.50;
+            if (dieResult === 'box1') {
+                box1Total += 0.50;
             } else {
-                stamfordTotal += 0.50;
+                box2Total += 0.50;
             }
         }
 
         document.getElementById('roll-die').addEventListener('click', function() {
-            if (trialsLeft > 0 && !dieRolled) {
+            if (moneyLeft > 0 && !dieRolled) {
                 dieRolled = true;
                 updateGame();
             }
@@ -122,18 +133,39 @@
 
         function allocateMoney() {
             if (!dieRolled) return;
-            trialsLeft--;
             moneyLeft -= 0.50;
             document.getElementById('money-left').innerHTML = `Money Left: $${moneyLeft.toFixed(2)}`;
-            document.getElementById('storrs-earnings').innerHTML = `$${storrsTotal.toFixed(2)}`;
-            document.getElementById('stamford-earnings').innerHTML = `$${stamfordTotal.toFixed(2)}`;
+            document.getElementById('box1-earnings').innerHTML = `$${box1Total.toFixed(2)}`;
+            document.getElementById('box2-earnings').innerHTML = `$${box2Total.toFixed(2)}`;
             
             if (moneyLeft <= 0) {
-                document.body.innerHTML = '<h1>Game Over!</h1><p>Storrs: $' + storrsTotal.toFixed(2) + ', Stamford: $' + stamfordTotal.toFixed(2) + '</p><button class="button" onclick="startNextGame()">Next Game</button>';
+                document.body.innerHTML = `<h1>Game Over!</h1><p>${gameSettings[currentGame - 1].box1}: $${box1Total.toFixed(2)}, ${gameSettings[currentGame - 1].box2}: $${box2Total.toFixed(2)}</p><button class="button" onclick="startNextGame()">Next Game</button>`;
             } else {
-                resetDie();
+                dieRolled = false;
+                document.getElementById('roll-die').disabled = false;
             }
         }
 
-        function resetDie() {
-            document.getElem
+        function startNextGame() {
+            if (currentGame < games) {
+                currentGame++;
+                moneyLeft = 10.00;
+                box1Total = 0.00;
+                box2Total = 0.00;
+                document.body.innerHTML = `<h1>Next Game</h1><button class="button" onclick="initializeGame()">Start</button>`;
+            } else {
+                document.body.innerHTML = '<h1>All games completed!</h1>';
+            }
+        }
+
+        function initializeGame() {
+            location.reload();
+        }
+
+        document.getElementById('box1').addEventListener('click', allocateMoney);
+        document.getElementById('box2').addEventListener('click', allocateMoney);
+
+        setGameScreen();
+    </script>
+</body>
+</html>
