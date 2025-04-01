@@ -66,49 +66,34 @@
     </style>
 </head>
 <body>
-    <!-- Start Screen -->
-    <div id="start-screen">
-        <h1>Welcome to the Random Allocation Game</h1>
-        <button class="button" onclick="startGame()">Start</button>
-    </div>
-
-    <div id="game-screen" style="display:none;">
-        <h1>Random Allocation Game</h1>
-        <p>You have $10 to allocate between two groups. Click "Roll the Die" to determine which group receives the money. After each game, earnings for each box will be displayed before starting the next game.</p>
-
-        <div class="dice" id="dice">50¢</div>
-
-        <button class="button" id="roll-die">Roll the Die</button>
-
-        <div class="allocation-container">
-            <div id="Storrs" class="allocation-box">
-                <div class="box-title">UConn Storrs Campus</div>
-                <p id="storrs-earnings">$0.00</p>
-            </div>
-            <div id="Stamford" class="allocation-box">
-                <div class="box-title">UConn Stamford Campus</div>
-                <p id="stamford-earnings">$0.00</p>
-            </div>
+    <h1>Random Allocation Game</h1>
+    <p>You have $10 to allocate between two groups. Click "Roll the Die" to determine which group receives the money. After each game, earnings for each box will be displayed before starting the next game.</p>
+    
+    <div class="dice" id="dice">50¢</div>
+    
+    <button class="button" id="roll-die">Roll the Die</button>
+    
+    <div class="allocation-container">
+        <div id="Storrs" class="allocation-box">
+            <div class="box-title">UConn Storrs Campus</div>
+            <p id="storrs-earnings">$0.00</p>
         </div>
-
-        <div class="result" id="final-score"></div>
-        <p id="money-left">Money Left: $10.00</p>
+        <div id="Stamford" class="allocation-box">
+            <div class="box-title">UConn Stamford Campus</div>
+            <p id="stamford-earnings">$0.00</p>
+        </div>
     </div>
-
+    
+    <div class="result" id="final-score"></div>
+    <p id="money-left">Money Left: $10.00</p>
+    
     <script>
         let games = 4;
         let currentGame = 1;
         let moneyLeft = 10.00;
-        let trialsLeft = 20;
         let storrsTotal = 0.00;
         let stamfordTotal = 0.00;
         let dieRolled = false;
-
-        function startGame() {
-            document.getElementById('start-screen').style.display = 'none';
-            document.getElementById('game-screen').style.display = 'block';
-            initializeGame();
-        }
 
         function rollDie() {
             return Math.random() < 0.5 ? 'Storrs' : 'Stamford';
@@ -128,7 +113,7 @@
         }
 
         document.getElementById('roll-die').addEventListener('click', function() {
-            if (trialsLeft > 0 && !dieRolled) {
+            if (moneyLeft > 0 && !dieRolled) {
                 dieRolled = true;
                 updateGame();
             }
@@ -136,7 +121,6 @@
 
         function allocateMoney() {
             if (!dieRolled) return;
-            trialsLeft--;
             moneyLeft -= 0.50;
             document.getElementById('money-left').innerHTML = `Money Left: $${moneyLeft.toFixed(2)}`;
             document.getElementById('storrs-earnings').innerHTML = `$${storrsTotal.toFixed(2)}`;
@@ -159,7 +143,6 @@
             if (currentGame < games) {
                 currentGame++;
                 moneyLeft = 10.00;
-                trialsLeft = 20;
                 storrsTotal = 0.00;
                 stamfordTotal = 0.00;
                 document.body.innerHTML = '<h1>Next Game</h1><button class="button" onclick="initializeGame()">Start</button>';
