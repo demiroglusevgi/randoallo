@@ -102,7 +102,7 @@
         ];
 
         function setGameScreen() {
-            document.getElementById("game-instructions").innerHTML = `You have $10 to allocate between two groups: ${gameSettings[currentGame - 1].box1} and ${gameSettings[currentGame - 1].box2}. Click \"Roll the Die\" to determine which group receives the money.`;
+            document.getElementById("game-instructions").innerHTML = `You have $10 to allocate between two groups: ${gameSettings[currentGame - 1].box1} and ${gameSettings[currentGame - 1].box2}. Click "Roll the Die" to determine which group receives the money.`;
             document.getElementById("box1-title").innerText = gameSettings[currentGame - 1].box1;
             document.getElementById("box2-title").innerText = gameSettings[currentGame - 1].box2;
         }
@@ -134,38 +134,5 @@
         function allocateMoney() {
             if (!dieRolled) return;
             moneyLeft -= 0.50;
-            document.getElementById('money-left').innerHTML = `Money Left: $${moneyLeft.toFixed(2)}`;
-            document.getElementById('box1-earnings').innerHTML = `$${box1Total.toFixed(2)}`;
-            document.getElementById('box2-earnings').innerHTML = `$${box2Total.toFixed(2)}`;
-            
-            if (moneyLeft <= 0) {
-                document.body.innerHTML = `<h1>Game Over!</h1><p>${gameSettings[currentGame - 1].box1}: $${box1Total.toFixed(2)}, ${gameSettings[currentGame - 1].box2}: $${box2Total.toFixed(2)}</p><button class="button" onclick="startNextGame()">Next Game</button>`;
-            } else {
-                dieRolled = false;
-                document.getElementById('roll-die').disabled = false;
-            }
-        }
+            document.getElementById('money-left
 
-        function startNextGame() {
-            if (currentGame < games) {
-                currentGame++;
-                moneyLeft = 10.00;
-                box1Total = 0.00;
-                box2Total = 0.00;
-                document.body.innerHTML = `<h1>Next Game</h1><button class="button" onclick="initializeGame()">Start</button>`;
-            } else {
-                document.body.innerHTML = '<h1>All games completed!</h1>';
-            }
-        }
-
-        function initializeGame() {
-            location.reload();
-        }
-
-        document.getElementById('box1').addEventListener('click', allocateMoney);
-        document.getElementById('box2').addEventListener('click', allocateMoney);
-
-        setGameScreen();
-    </script>
-</body>
-</html>
